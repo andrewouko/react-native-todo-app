@@ -2,11 +2,16 @@
 This is a [ReactNative] Typescript project to showcase the navigation, statement management and API fetching.
 It uses the [https://jsonplaceholder.typicode.com] open API as the backend.
 
+## Prerequisites
+- Android SDK Platform 33
+- React native cli
+- NodeJS & Npm (LTS preferred)
+
 ## Dependencies
 - @react-navigation/native: For screen navigation
 - @react-native-community/checkbox: closest we can get to native checkbox component
 - ZOD: validation tool
-- Redux Toolkit: API slices & mware
+- Redux Toolkit: API slices & middleware for queries and mutations to https://jsonplaceholder.typicode.com
 - Redux: state management
 - react-hook-form: form builder
 - @hookform/resolvers: zodResolver to validate zod schemas for the forms

@@ -1,5 +1,5 @@
 # Introduction
-This is a [ReactNative] Typescript project to showcase the navigation, statement management and API fetching.
+This is a [ReactNative] Typescript project to showcase navigation, state management and API fetching.
 It uses the [https://jsonplaceholder.typicode.com] open API as the backend.
 
 ## Prerequisites

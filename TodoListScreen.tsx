@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import TaskItem from './components/TaskItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AddTodoButton from './components/AddTodoButton';
+import FullScreenLoader from './components/FullScreenLoader';
 
 type TodoViewScreenNavigationProp = NativeStackNavigationProp<
   NativeStackParamList,
@@ -21,11 +22,11 @@ const TodoListScreen: React.FC = () => {
   };
 
   const handleAddTodo = () => {
-    navigation.navigate('TodoForm');
+    navigation.navigate('TodoForm', {todo: undefined});
   };
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <FullScreenLoader visible={isLoading} />;
   }
 
   if (isError || !Array.isArray(todos)) {

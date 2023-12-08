@@ -3,7 +3,7 @@ import {z} from 'zod';
 export type NativeStackParamList = {
   TodoList: undefined;
   TodoView: {id: number};
-  TodoForm: undefined;
+  TodoForm: {todo?: AddTodo};
 };
 
 export const TodoSchema = z.object({

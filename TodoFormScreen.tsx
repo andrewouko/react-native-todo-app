@@ -4,29 +4,34 @@ import CheckBox from '@react-native-community/checkbox';
 import {useForm, Controller, SubmitHandler} from 'react-hook-form';
 import {AddTodo, NativeStackParamList, TodoSchema} from './types';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 import {usePostTodoMutation} from './lib/redux/ApiSlice';
-// import {usePostTodoMutation} from './lib/redux/ApiSlice';
+import FullScreenLoader from './components/FullScreenLoader';
 
 type TodoListScreenNavigationProp = NativeStackNavigationProp<
   NativeStackParamList,
   'TodoList'
 >;
+type Props = NativeStackScreenProps<NativeStackParamList, 'TodoForm'>;
 
-export default function TodoFormScreen() {
+export default function TodoFormScreen({route}: Props) {
+  const {todo} = route.params;
   const {
     control,
     handleSubmit,
+    reset,
     formState: {errors},
   } = useForm<AddTodo>({
     resolver: zodResolver(TodoSchema),
-    defaultValues: {completed: false},
+    defaultValues: {completed: false, ...(todo !== undefined && todo)},
   });
   const [createPost, {isLoading, isError, error, data: createPostResult}] =
     usePostTodoMutation();
   const onSubmit: SubmitHandler<AddTodo> = data => {
-    console.log(data);
     createPost(data);
   };
 
@@ -36,23 +41,26 @@ export default function TodoFormScreen() {
     Alert.alert(title, message, [], {
       cancelable: true,
     });
+  const handleReset = () => {
+    reset();
+  };
 
   React.useEffect(() => {
     if (createPostResult) {
       console.log(createPostResult);
-      showAlert('Success', 'Successfully created the todo with status');
+      showAlert(
+        'Success',
+        `Successfully ${todo !== undefined ? 'edited' : 'created'} the todo.`,
+      );
     }
     if (isError) {
       console.error(error);
       showAlert('Failed', 'Failed to create the todo.');
     }
-    if (isLoading) {
-      showAlert('In Progress', 'Creating todo...');
-    }
-  }, [createPostResult, error, isError, isLoading]);
+  }, [createPostResult, error, isError, isLoading, todo]);
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <FullScreenLoader visible={isLoading} />;
   }
 
   return (
@@ -108,8 +116,16 @@ export default function TodoFormScreen() {
       {errors.completed && (
         <Text style={styles.errorLabel}>{errors.completed.message}</Text>
       )}
-      <View style={styles.button}>
-        <Button title="Add Todo" onPress={handleSubmit(onSubmit)} />
+      <View style={styles.buttonContainer}>
+        <View style={styles.button}>
+          <Button title="Reset form" onPress={handleReset} />
+        </View>
+        <View style={styles.button}>
+          <Button
+            title={`${todo !== undefined ? 'Edit' : 'Add'} Todo`}
+            onPress={handleSubmit(onSubmit)}
+          />
+        </View>
       </View>
       <View style={styles.button}>
         <Button
@@ -125,7 +141,7 @@ export default function TodoFormScreen() {
 
 const styles = StyleSheet.create({
   label: {
-    color: 'white',
+    color: 'black',
     margin: 20,
     marginLeft: 0,
   },
@@ -145,12 +161,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 8,
-    backgroundColor: '#0e101c',
+    backgroundColor: '#DAD4B5',
   },
   input: {
     backgroundColor: 'white',
     height: 40,
     padding: 10,
     borderRadius: 4,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
 });
